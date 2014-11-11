@@ -2,7 +2,6 @@
 #include <stack>
 
 using namespace std;
-
 long long abbs(long long i){
 	if(i < 0) return -1*i;
 	else return i;
@@ -63,7 +62,20 @@ contFrac toCont(normFrac t){
 	return ans;
 }
 
-contFrac toContNeg(normFrac t){ //ELIMINATE THIS FUNCTION
+contFrac toContNeg(normFrac t){ 
+	long long intPart = 0;
+	normFrac o;
+	o.n = 1;
+	o.d = 1;
+	t.n = abbs(t.n);
+	t.d = abbs(t.d);
+	intPart = (t.n-t.n%t.d)/t.d;
+	intPart++;
+	t = sub(o,t);
+	o.d = 1;
+	o.n = intPart;
+	t = mul(o, t)
+	return toCont(t);
 }
 
 normFrac add(normFrac an, normFrac bn){
@@ -98,6 +110,10 @@ int main(){
 	long long numa, numb;
 	cin >> numa >> numb;
 	int casa = 0;
+	bool isNega = false;
+	bool isNegs = false;
+	bool isNegm = false;
+	bool isNegd = false;
 	while(numa != 0 || numb != 0){
 		#ifdef DEBUG
 			cout << endl << endl;
@@ -138,10 +154,50 @@ int main(){
 			cout << "rdn:\t" << rdn.n << "\t/ " << rdn.d << endl;
 		#endif
 		
-		contFrac rac = toCont(ran);
-		contFrac rsc = toCont(rsn);
-		contFrac rmc = toCont(rmn);
-		contFrac rdc = toCont(rdn);
+		contFrac rac;
+		contFrac rsc;
+		contFrac rmc;
+		contFrac rdc;
+		if(ran.d >= 0 && ran.n >= 0)
+		{
+			isNega = false;
+			rac = toCont(ran);
+		}
+		else
+		{
+			isNega = true;
+			rac = toContNeg(ran);
+		}
+		if(rsn.d >= 0 && rsn.n >= 0)
+		{
+			isNegs = false;
+			rsc = toCont(rsn);
+		}
+		else
+		{
+			isNegs = true;
+			rsc = toContNeg(rsn);
+		}
+		if(rmn.d >= 0 && rmn.n >= 0)
+		{
+			isNegm = false;
+			rmc = toCont(rmn);
+		}
+		else
+		{
+			isNegm = true;
+			rmc = toContNeg(rmn);
+		}
+		if(rdn.d >= 0 && rdn.n >= 0) 
+		{
+			isNegd = false;
+			rdc = toCont(rdn);
+		}
+		else
+		{	
+			isNegd = true;
+			rac = toContNeg(rdn);
+		}
 		
 		stack<long long> a, s, m, d;
 		while(!rac.nums.empty()){
@@ -164,24 +220,38 @@ int main(){
 		#ifdef DEBUG
 			cout << endl;
 		#endif
-		
+		if(isNega && a.top() != 0)
+		{
+			cout << "-";
+		}
 		while(!a.empty()){
 			cout << a.top() << " ";
 			a.pop();
 		} cout << endl;
+		if(isNegs && s.top() != 0)
+		{
+			cout << "-";
+		}
 		while(!s.empty()){
 			cout << s.top() << " ";
 			s.pop();
 		} cout << endl;
+		if(isNegm && rmc.nums.top() != 0)
+		{
+			cout << "-";
+		}
 		while(!m.empty()){
 			cout << m.top() << " ";
 			m.pop();
 		} cout << endl;
+		if(isNegd && d.top() != 0)
+		{
+			cout << "-";
+		}
 		while(!d.empty()){
 			cout << d.top() << " ";
 			d.pop();
 		} cout << endl;
-
 		cin >> numa >> numb;
 	}
 	
